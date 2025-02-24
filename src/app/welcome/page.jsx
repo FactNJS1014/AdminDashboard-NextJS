@@ -30,7 +30,22 @@ function welcome() {
           <div>
             <div className="shadow-xl my-10 p-10 rounded-xl">
               <h4 className="text-2xl">Post Title</h4>
-              <Image className="" />
+              <Image className="my-3 rounded-md" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29kaW5nfGVufDB8fDB8fHww"   
+                width={300}
+                height={0}
+                alt="post image"
+              />
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vitae maxime itaque et quod ut sequi sapiente dolor, dolores necessitatibus enim sed incidunt ab possimus, voluptas expedita optio, suscipit dolore aut!
+              </p>
+              <div className="mt-5">
+                <Link className="bg-gray-500 text-white border py-2 px-3 rounded-md text-lg my-2" href="/edit">
+                Edit
+                </Link>
+                <Link className="bg-red-500 text-white border py-2 px-3 rounded-md text-lg my-2" href="/delete">
+                Delete
+                </Link>
+              </div>
             </div>
           </div>
         </div>
