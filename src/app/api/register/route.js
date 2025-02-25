@@ -18,3 +18,4 @@ export async function POST(req) {
         return NextResponse.json({ message: "An error occured while registrating the user." }, { status: 500 });
     }
 }
+

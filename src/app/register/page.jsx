@@ -1,52 +1,80 @@
 "use client";
-import React,{useState} from 'react'
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Container from "../components/Container";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+
 function RegisterPage() {
-  const [name,setName] = useState('');
-  const [email,setEmail] = useState('');
-  const [password,setPassword] = useState('');
-  const [confirmPassword,setConfirmPassword] = useState('');
-  const [error,setError] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const { data: session } = useSession();
+  if(session) redirect("/welcome");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(password !== confirmPassword){
-      setError('Passwords do not match');
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
 
-    if(name === '' || email === '' || password === '' || confirmPassword === ''){
-      setError('Please fill in all fields');
+    if (
+      name === "" ||
+      email === "" ||
+      password === "" ||
+      confirmPassword === ""
+    ) {
+      setError("Please fill in all fields");
       return;
     }
 
     try {
-      const res = await fetch('/api/register',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json'
+      const resUserExists = await fetch("/api/userExists", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body:JSON.stringify({
+        body: JSON.stringify({
+          email,
+        }),
+      })
+
+      const {user} = await resUserExists.json();
+      if(user) {
+        setError("User already exists");
+        return;
+      }
+
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           name,
           email,
-          password
-        })
-      })
-      if(res.ok){
+          password,
+        }),
+      });
+      if (res.ok) {
         const form = e.target;
-        setError('');
+        setError("");
+        setSuccess("User registration successful");
         form.reset();
-      }else{
-        console.log('User registration failed');
+      } else {
+        console.log("User registration failed");
       }
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   return (
     <div>
       <Container>
@@ -60,6 +88,12 @@ function RegisterPage() {
                 {error && (
                   <div className="bg-red-500 text-white p-3 rounded w-fit text-sm mt-2">
                     {error}
+                  </div>
+                )}
+
+                {success && (
+                  <div className="bg-green-500 text-white p-3 rounded w-fit text-sm mt-2">
+                    {success}
                   </div>
                 )}
                 <input
@@ -86,14 +120,18 @@ function RegisterPage() {
                   placeholder="Confirm your password"
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <button className="bg-green-500 text-white border py-2 px-3 rounded text-lg my-2" type="submit">Sign Up</button>
+                <button
+                  className="bg-green-500 text-white border py-2 px-3 rounded text-lg my-2"
+                  type="submit"
+                >
+                  Sign Up
+                </button>
                 <hr className="my-3" />
                 <p>
-                  Already have an account? Go to {''}
-                  <Link href="/login" className='text-blue-500 hover:underline'>
-                    Log In 
+                  Already have an account? Go to {""}
+                  <Link href="/login" className="text-blue-500 hover:underline">
+                    Log In
                   </Link>
-                 
                 </p>
               </form>
             </div>
@@ -102,7 +140,7 @@ function RegisterPage() {
         <Footer />
       </Container>
     </div>
-  )
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
